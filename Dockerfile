@@ -3,12 +3,8 @@
 # Specifiy the version of base image and python to be used
 FROM python:3.7-alpine
 
-# Set and create the working directory for our application
+# Set and create the working directory for our application in the container image
 WORKDIR /app
-
-# Set some sane defaults for environment variables - can be overridden from the commandline
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
 
 # Add the packages needed for Flask to run in Alpine-Linux
 RUN apk add --no-cache gcc musl-dev linux-headers
@@ -20,7 +16,12 @@ EXPOSE 5000
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-# Copy the application files in 
+# Set some sane defaults for environment variables - can be overridden from the commandline
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_ENV=${FLASK_ENV:-development}
+
+# Copy the application files into the WORKDIR 
 ADD app/ .
 
 CMD ["flask", "run"]
