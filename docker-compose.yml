@@ -1,13 +1,24 @@
-version: "3.9"
+version: "3"
+
+# If built with the following command, it will auto tag the image with the commit hash:
+#   DOCKER_TAG=`git rev-parse --short HEAD` docker-compose build
+# To build/push to latest tag, 
+#   DOCKER_TAG=latest docker-compose build && DOCKER_TAG=latest docker-compose push
+# The default tag will be 'testing', to avoid accidental deployment to live systems
+# before actual intentional testing and tagging has happened.
+#
+# Changing Flask running mode:  the default is to run in development mode, to change that
+# add the 'FLASK_ENV=production' definition before the 'docker-compose' command like so:
+#   DOCKER_TAG=latest FLASK_ENV=production docker-compose build
 
 services:
 
   web:
-    image: thenetyeti/flasktest01:latest
+    image: thenetyeti/flasktest01:${DOCKER_TAG:-testing}
     build: .
     ports:
       - "5000:5000"
-
+    volumes:
+      - ./app/:/app
   redis:
     image: "redis:alpine"
-
